@@ -1,8 +1,3 @@
-# Bibliotecas necessárias ----
-#!pip install youtube-transcript-api
-#!pip install google-api-python-client
-#!pip install pandas
-
 # Importando bibliotecas ----
 import os
 import pandas as pd
@@ -30,7 +25,7 @@ def get_uploads_playlist_id(youtube, channel_id):
     uploads_playlist_id = response["items"][0]["contentDetails"]["relatedPlaylists"]["uploads"]
     return uploads_playlist_id
 
-# Função para obter todos os video IDs e títulos da playlist de uploads
+# Função para obter todos os video IDs, títulos e datas da playlist de uploads
 def get_all_video_details(youtube, uploads_playlist_id):
     video_details = []
     next_page_token = None
@@ -46,7 +41,13 @@ def get_all_video_details(youtube, uploads_playlist_id):
         for item in response["items"]:
             video_id = item["contentDetails"]["videoId"]
             video_title = item["snippet"]["title"]
-            video_details.append({"VideoID": video_id, "Title": video_title})
+            video_published_at = item["snippet"]["publishedAt"]  # Data de publicação
+            
+            video_details.append({
+                "VideoID": video_id,
+                "Title": video_title,
+                "PublishedAt": video_published_at  # Adiciona a data de publicação
+            })
         
         next_page_token = response.get("nextPageToken")
         if next_page_token is None:
@@ -76,14 +77,14 @@ def main():
     # Obtém o ID da playlist de uploads do canal
     uploads_playlist_id = get_uploads_playlist_id(youtube, channel_id)
     
-    # Obtém todos os video IDs e títulos
+    # Obtém todos os video IDs, títulos e datas de publicação
     video_details = get_all_video_details(youtube, uploads_playlist_id)
     
     # Adiciona as legendas a cada vídeo
     for video in video_details:
         video["Captions"] = get_video_captions(video["VideoID"])
     
-    # Cria um DataFrame usando os video IDs, títulos e legendas
+    # Cria um DataFrame usando os video IDs, títulos, datas de publicação e legendas
     df = pd.DataFrame(video_details)
     
     # Salva o DataFrame em um arquivo CSV
