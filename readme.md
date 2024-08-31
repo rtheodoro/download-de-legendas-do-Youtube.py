@@ -84,5 +84,4 @@ print(videos_sem_legendas["Title"].tolist())
 
 ## TO-DO List
 
- - [] Alguns vídeos estão vindo sem legenda, não porque, estou tentando resolver (precisa fazer uma busca novamente)
  - [] Adicionar função que encontre o Id do Canal pela URL (minha autenticação do google não estava funcionando para isso, depois tento novamente)
